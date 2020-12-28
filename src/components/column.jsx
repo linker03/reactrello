@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import CardItem from './card';
 import Modal from './cardportal';
 import Context from '../context';
+import ModalWrapper from './modal-wrapper';
+import CardCreateForm from './create-card-form';
 
 const ColumnWrapper = styled.div`
   margin-bottom: 30px;
@@ -36,11 +38,49 @@ const ColumnWrapper = styled.div`
     cursor: pointer;
   }
 `;
+const ModalContent = styled.div`
+  background-color: aliceblue;
+  padding: 20px;
+  z-index: 3;
+  min-height: 400px;
+  min-width: 400px;
+  max-width: 50%;
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  .window-title {
+    font-size: 30px;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .card__title {
+    margin: 10px 5px 5px 10px;
+  }
+  .card__title > input {
+    margin: 10px;
+    width: 50%;
+  }
+  .card__body {
+    margin: 10px 5px 5px 10px;
+    display: flex;
+  }
+  .card__body > textarea {
+    margin-left: 10px;
+  }
+  .buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+  }
+`;
 
 const Column = (props) => {
   const [state, setModal] = useState({ showCreateModal: false });
-  const {} = React.useContext(Context);
-  function addCard() {}
+  function closeModal() {
+    setModal({ showCreateModal: false });
+  }
   const cards = props.cards.map((card) => {
     return <CardItem key={card.id} card={card}></CardItem>;
   });
@@ -58,23 +98,15 @@ const Column = (props) => {
       </div>
       {state.showCreateModal && (
         <Modal>
-          <div className="card__create_wrapper">
-            <div className="card__title">
-              <input type="text" />
-            </div>
-            <div className="card__body">
-              <input type="text" />
-            </div>
-            <button className="card__create">Create</button>
-            <button
-              className="card__cancel"
-              onClick={() => {
-                setModal({ showCreateModal: false });
-              }}
-            >
-              Cancel
-            </button>
-          </div>
+          <ModalWrapper>
+            <ModalContent>
+              <CardCreateForm
+                author={props.author}
+                column={props.column}
+                close={closeModal}
+              />
+            </ModalContent>
+          </ModalWrapper>
         </Modal>
       )}
     </ColumnWrapper>

@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
 import CardModal from './cardportal';
+import ModalWrapper from './modal-wrapper';
 
 const CardWrapper = styled.div`
   padding: 5px;
@@ -29,30 +30,20 @@ const CardWrapper = styled.div`
   }
 `;
 
-const ModalWrapper = styled.div`
-  position: fixed;
-  background-color: RGBA(0, 0, 0, 0.8);
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  .modal-content {
-    display: grid;
-    grid-template-areas:
-      'title close'
-      'body body'
-      'author delete';
-    grid-template-rows: 50px 1fr 50px;
-    background-color: aliceblue;
-    padding: 20px;
-    z-index: 3;
-    min-height: 400px;
-    min-width: 400px;
-    max-width: 50%;
-  }
+const ModalContent = styled.div`
+  display: grid;
+  grid-template-areas:
+    'title close'
+    'body body'
+    'author delete';
+  grid-template-rows: 50px 1fr 50px;
+  background-color: aliceblue;
+  padding: 20px;
+  z-index: 3;
+  min-height: 400px;
+  min-width: 400px;
+  max-width: 50%;
+
   a {
     grid-area: close;
     justify-self: end;
@@ -103,7 +94,7 @@ const CardItem = (props) => {
       {state.showModal && (
         <CardModal>
           <ModalWrapper>
-            <div className="modal-content">
+            <ModalContent>
               <div className="modal-title">{props.card.title}</div>
               <a href="" onClick={onClickCloseModal} className="close-icon">
                 X
@@ -111,7 +102,7 @@ const CardItem = (props) => {
               <div className="modal-body">{props.card.body}</div>
               <div className="modal-author">Author: {props.card.author}</div>
               <div className="modal-delete">Delete</div>
-            </div>
+            </ModalContent>
           </ModalWrapper>
         </CardModal>
       )}

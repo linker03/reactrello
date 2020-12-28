@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 
 const ModalWrapper = styled.div`
   position: fixed;
@@ -12,11 +13,11 @@ const ModalWrapper = styled.div`
   align-items: center;
 `;
 
-const wrapper = () => {
+const wrapper = (props) => {
   return (
-    <Fragment>
-      <ModalWrapper>{children}</ModalWrapper>
-    </Fragment>
+    <React.Fragment>
+      <ModalWrapper>{props.children}</ModalWrapper>
+    </React.Fragment>
   );
 };
 
