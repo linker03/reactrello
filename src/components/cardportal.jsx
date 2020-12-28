@@ -1,0 +1,35 @@
+import React, { createPortal } from 'react';
+import styled from 'styled-components';
+import ReactDOM from 'react-dom';
+
+class CardModal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.el = document.createElement('div');
+  }
+  componentDidMount() {
+    document.body.append(this.el);
+  }
+  componentWillUnmount() {
+    document.body.removeChild(this.el);
+  }
+
+  render() {
+    return ReactDOM.createPortal(this.props.children, this.el);
+  }
+
+  // render() {
+  //   return (
+  //     <ModalWrapper>
+  //       <div className="modal-content">
+  //         <a href="" className="close-icon"></a>
+  //         <div className="modal-title"></div>
+  //         <div className="modal-body"></div>
+  //         <div className="modal-author"></div>
+  //       </div>
+  //     </ModalWrapper>
+  //   );
+  // }
+}
+
+export default CardModal;
