@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import Board from './components/board';
 import Column from './components/column';
 import Context from './context';
+import Modal from './components/cardportal';
+import ModalWrapper from './components/modal-wrapper';
 
 const App = () => {
   const [cards, setCards] = useState({
+    onStart: true,
     todo: [
       {
         id: 0,
@@ -40,9 +43,6 @@ const App = () => {
       ...state,
       [column]: cards[column].concat([newCard]),
     }));
-    console.log('cards', cards);
-    console.log('newCard', newCard);
-    console.log(cards[column]);
   };
 
   return (
@@ -54,7 +54,34 @@ const App = () => {
           cards={cards.todo}
           author={cards.author}
         ></Column>
+        <Column
+          title="In progress"
+          column={'in_progress'}
+          cards={cards.in_progress}
+          author={cards.author}
+        ></Column>
       </Board>
+      {cards.onStart && (
+        <Modal>
+          <ModalWrapper>
+            <div>Enter your name</div>
+            <input
+              placeholder="Enter name"
+              onChange={(event) => {
+                setCards((state) => ({ ...state, author: event.target.value }));
+              }}
+            ></input>
+            <button
+              type="button"
+              onClick={() => {
+                setCards((state) => ({ ...state, onStart: false }));
+              }}
+            >
+              Ok
+            </button>
+          </ModalWrapper>
+        </Modal>
+      )}
     </Context.Provider>
   );
 };

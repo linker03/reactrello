@@ -49,7 +49,7 @@ const CardCreateForm = (props) => {
   function submitHandler(event) {
     event.preventDefault();
     addCard(state.column, state.title, state.body);
-    console.log('state', state);
+    props.close();
   }
 
   return (
