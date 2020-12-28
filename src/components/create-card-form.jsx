@@ -39,13 +39,16 @@ const CardCreateForm = (props) => {
     body: '',
     author: props.author,
   });
+
   const onChangeHandler = (event) => {
     setState((state) => ({
       ...state,
       [event.target.name]: event.target.value,
     }));
   };
+
   const { addCard } = React.useContext(Context);
+
   function submitHandler(event) {
     event.preventDefault();
     addCard(state.column, state.title, state.body);

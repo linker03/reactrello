@@ -1,5 +1,4 @@
-import React, { createPortal } from 'react';
-import styled from 'styled-components';
+import React from 'react';
 import ReactDOM from 'react-dom';
 
 class CardModal extends React.Component {
