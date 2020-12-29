@@ -60,8 +60,26 @@ const App = () => {
     }));
   };
 
+  const addComment = (column, cardId, text) => {
+    let newComment = {
+      id: Date.now(),
+      text,
+      author: cards.author,
+    };
+    setCards((state) => ({
+      ...state,
+      [column]: cards[column].map((card) => {
+        if (card.id === cardId) {
+          return { ...card, comments: card.comments.concat([newComment]) };
+        } else {
+          return card;
+        }
+      }),
+    }));
+  };
+  console.log('appstate', cards);
   return (
-    <Context.Provider value={{ addCard }}>
+    <Context.Provider value={{ addCard, addComment }}>
       <Board>
         <Column
           title="TO DO"

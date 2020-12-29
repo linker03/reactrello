@@ -46,6 +46,8 @@ const ModalContent = styled.div`
   min-height: 400px;
   min-width: 400px;
   max-width: 50%;
+  max-height: 80%;
+  overflow: scroll;
 
   a {
     grid-area: close;
@@ -75,7 +77,6 @@ const ModalContent = styled.div`
   }
   .comments {
     grid-area: comment;
-    overflow: scroll;
   }
 `;
 const CreateComment = styled.div`
@@ -99,14 +100,19 @@ const CardItem = (props) => {
     setState((state) => ({ ...state, showModal: false }));
   };
 
+  const commentInput = (event) => {
+    setState((state) => ({ ...state, comment: event.target.value }));
+  };
+
+  console.log('cardstate', state);
+  console.log('cardprops', props);
+
   const comments = props.card.comments.map((comment) => {
     return <CommentItem comment={comment} />;
   });
 
-  const commentInput = (event) => {
-    setState((state) => ({ ...state, comment: event.target.value }));
-  };
-  console.log('cardstate', props);
+  const { addComment } = React.useContext(Context);
+
   return (
     <Fragment>
       <CardWrapper onClick={onClickOpenModal}>
@@ -128,7 +134,14 @@ const CardItem = (props) => {
                 <CreateComment>
                   Create comment:
                   <input type="text" onChange={commentInput} />
-                  <button>Create</button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addComment(props.column, props.card.id, state.comment);
+                    }}
+                  >
+                    Create
+                  </button>
                 </CreateComment>
               </div>
               <div className="modal-author">Author: {props.card.author}</div>
