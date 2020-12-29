@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import CardItem from './card';
 import Modal from './cardportal';
-import Context from '../context';
 import ModalWrapper from './modal-wrapper';
 import CardCreateForm from './create-card-form';
 
@@ -82,7 +81,9 @@ const Column = (props) => {
     setModal({ showCreateModal: false });
   }
   const cards = props.cards.map((card) => {
-    return <CardItem key={card.id} card={card}></CardItem>;
+    return (
+      <CardItem key={card.id} card={card} column={props.column}></CardItem>
+    );
   });
   return (
     <ColumnWrapper>

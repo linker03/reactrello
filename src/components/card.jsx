@@ -2,6 +2,8 @@ import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
 import CardModal from './cardportal';
 import ModalWrapper from './modal-wrapper';
+import CommentItem from './comment-item';
+import Context from '../context';
 
 const CardWrapper = styled.div`
   padding: 5px;
@@ -35,14 +37,17 @@ const ModalContent = styled.div`
   grid-template-areas:
     'title close'
     'body body'
+    'comment comment'
     'author delete';
-  grid-template-rows: 50px 1fr 50px;
+  grid-template-rows: 50px 1fr 1fr 50px;
   background-color: aliceblue;
   padding: 20px;
   z-index: 3;
   min-height: 400px;
   min-width: 400px;
   max-width: 50%;
+  max-height: 80%;
+  overflow: scroll;
 
   a {
     grid-area: close;
@@ -63,27 +68,51 @@ const ModalContent = styled.div`
   .modal-author {
     font-style: italic;
     grid-area: author;
-    align-self: end;
+    align-self: flex-end;
   }
   .modal-delete {
     grid-area: delete;
-    align-self: end;
-    justify-self: end;
+    align-self: flex-end;
+    justify-self: flex-end;
+  }
+  .comments {
+    grid-area: comment;
+  }
+`;
+const CreateComment = styled.div`
+  input {
+    margin: 5px;
   }
 `;
 
 const CardItem = (props) => {
   const [state, setState] = useState({
     showModal: false,
+    comment: '',
   });
+
   const onClickOpenModal = () => {
     setState((state) => ({ ...state, showModal: true }));
   };
+
   const onClickCloseModal = (e) => {
-    console.log(e);
     e.preventDefault();
     setState((state) => ({ ...state, showModal: false }));
   };
+
+  const commentInput = (event) => {
+    setState((state) => ({ ...state, comment: event.target.value }));
+  };
+
+  console.log('cardstate', state);
+  console.log('cardprops', props);
+
+  const comments = props.card.comments.map((comment) => {
+    return <CommentItem comment={comment} />;
+  });
+
+  const { addComment } = React.useContext(Context);
+
   return (
     <Fragment>
       <CardWrapper onClick={onClickOpenModal}>
@@ -100,6 +129,21 @@ const CardItem = (props) => {
                 X
               </a>
               <div className="modal-body">{props.card.body}</div>
+              <div className="comments">
+                {comments}
+                <CreateComment>
+                  Create comment:
+                  <input type="text" onChange={commentInput} />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addComment(props.column, props.card.id, state.comment);
+                    }}
+                  >
+                    Create
+                  </button>
+                </CreateComment>
+              </div>
               <div className="modal-author">Author: {props.card.author}</div>
               <div className="modal-delete">Delete</div>
             </ModalContent>
