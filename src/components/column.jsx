@@ -13,14 +13,17 @@ const ColumnWrapper = styled.div`
   overflow: hidden;
 
   .column__title {
-    display: block;
+    display: flex;
     background-color: #7048e8;
     font-size: 18px;
     font-weight: 700;
     top: -35px;
     color: aliceblue;
-    line-height: 2rem;
-    padding-left: 10px;
+    padding: 10px;
+    height: 20px;
+    text-align: center;
+    width: 100%;
+    border: 0;
   }
 
   .column__addcard {
@@ -77,9 +80,11 @@ const ModalContent = styled.div`
 
 const Column = (props) => {
   const [state, setModal] = useState({ showCreateModal: false });
+
   function closeModal() {
     setModal({ showCreateModal: false });
   }
+
   const cards = props.cards.map((card) => {
     return (
       <CardItem key={card.id} card={card} column={props.column}></CardItem>
@@ -87,7 +92,12 @@ const Column = (props) => {
   });
   return (
     <ColumnWrapper>
-      <div className="column__title">{props.title}</div>
+      <textarea
+        row="1"
+        spellCheck="false"
+        className="column__title"
+        defaultValue={props.title}
+      ></textarea>
       {cards}
       <div
         className="column__addcard"

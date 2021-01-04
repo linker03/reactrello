@@ -46,6 +46,13 @@ const App = () => {
 
     author: 'ME',
   });
+  const [columnNames, setColumnNames] = useState({
+    todo: 'TO DO',
+    in_progress: 'In progress',
+    testing: 'Testing',
+    done: 'Done',
+  });
+
   const addCard = (column, title, body) => {
     let newCard = {
       id: Date.now(),
@@ -77,41 +84,136 @@ const App = () => {
       }),
     }));
   };
+
+  const editComment = (column, cardId, commentId, newComment) => {
+    setCards((state) => ({
+      ...state,
+      [column]: cards[column].map((card) => {
+        if (card.id === cardId) {
+          return {
+            ...card,
+            comments: card.comments.map((comment) => {
+              if (comment.id === commentId) {
+                return { ...comment, text: newComment };
+              } else {
+                return comment;
+              }
+            }),
+          };
+        } else {
+          return card;
+        }
+      }),
+    }));
+  };
+
+  const delComment = (column, cardId, commentId) => {
+    setCards((state) => ({
+      ...state,
+      [column]: cards[column].map((card) => {
+        if (card.id === cardId) {
+          return {
+            ...card,
+            comments: card.comments.filter(
+              (comment) => comment.id !== commentId
+            ),
+          };
+        } else {
+          return card;
+        }
+      }),
+    }));
+  };
+
+  const editCard = (column, cardId, newTitle, newBody) => {
+    setCards((state) => ({
+      ...state,
+      [column]: cards[column].map((card) => {
+        if (card.id === cardId) {
+          return { ...card, title: newTitle, body: newBody };
+        } else {
+          return card;
+        }
+      }),
+    }));
+  };
+
+  const deleteCard = (column, cardId) => {
+    setCards((state) => ({
+      ...state,
+      [column]: cards[column].filter((card) => card.id !== cardId),
+    }));
+  };
+
+  // const changeColumnName = (column, newTitle) => {
+  //   setColumnNames((state) => ({
+  //     ...state,
+  //     [column]: newTitle,
+  //   }));
+  // };
+
   console.log('appstate', cards);
+
   return (
-    <Context.Provider value={{ addCard, addComment }}>
+    <Context.Provider
+      value={{
+        addCard,
+        editCard,
+        deleteCard,
+        addComment,
+        editComment,
+        delComment,
+      }}
+    >
       <Board>
         <Column
-          title="TO DO"
+          title={columnNames.todo}
           column={'todo'}
           cards={cards.todo}
           author={cards.author}
         ></Column>
         <Column
-          title="In progress"
+          title={columnNames.in_progress}
           column={'in_progress'}
           cards={cards.in_progress}
+          author={cards.author}
+        ></Column>
+        <Column
+          title={columnNames.testing}
+          column={'testing'}
+          cards={cards.testing}
+          author={cards.author}
+        ></Column>
+        <Column
+          title={columnNames.done}
+          column={'done'}
+          cards={cards.done}
           author={cards.author}
         ></Column>
       </Board>
       {cards.onStart && (
         <Modal>
           <ModalWrapper>
-            <div>Enter your name</div>
-            <input
-              placeholder="Enter name"
-              onChange={(event) => {
-                setCards((state) => ({ ...state, author: event.target.value }));
-              }}
-            ></input>
-            <button
-              type="button"
-              onClick={() => {
-                setCards((state) => ({ ...state, onStart: false }));
-              }}
-            >
-              Ok
-            </button>
+            <div className="container">
+              <div>Enter your name</div>
+              <input
+                placeholder="Enter name"
+                onChange={(event) => {
+                  setCards((state) => ({
+                    ...state,
+                    author: event.target.value,
+                  }));
+                }}
+              ></input>
+              <button
+                type="button"
+                onClick={() => {
+                  setCards((state) => ({ ...state, onStart: false }));
+                }}
+              >
+                Ok
+              </button>
+            </div>
           </ModalWrapper>
         </Modal>
       )}

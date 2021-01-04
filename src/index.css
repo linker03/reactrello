@@ -15,3 +15,14 @@ code {
 textarea {
   resize: none;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: aliceblue;
+  padding: 20px;
+}
+.container > div,
+.container > input {
+  margin-bottom: 10px;
+}

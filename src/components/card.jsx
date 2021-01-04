@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import CardModal from './cardportal';
 import ModalWrapper from './modal-wrapper';
@@ -48,6 +48,18 @@ const ModalContent = styled.div`
   max-width: 50%;
   max-height: 80%;
   overflow: scroll;
+  transition-duration: 0.5s;
+
+  textarea {
+    background-color: aliceblue;
+    border: 0;
+    transition-duration: 0.5s;
+  }
+  textarea:focus {
+    background-color: white;
+    border: 1px solid purple;
+    transition-duration: 0.5s;
+  }
 
   a {
     grid-area: close;
@@ -60,6 +72,7 @@ const ModalContent = styled.div`
     text-transform: capitalize;
     font-size: 28px;
     font-weight: 500;
+    height: 30px;
   }
   .modal-body {
     grid-area: body;
@@ -74,6 +87,7 @@ const ModalContent = styled.div`
     grid-area: delete;
     align-self: flex-end;
     justify-self: flex-end;
+    cursor: pointer;
   }
   .comments {
     grid-area: comment;
@@ -91,12 +105,33 @@ const CardItem = (props) => {
     comment: '',
   });
 
+  const [cardEdit, setCardEdit] = useState({
+    id: 0,
+    title: props.card.title,
+    body: props.card.body,
+  });
+
+  const escFunction = useCallback((event) => {
+    if (event.keyCode === 27) {
+      setState((state) => ({ ...state, showModal: false }));
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('keydown', escFunction, false);
+
+    return () => {
+      document.removeEventListener('keydown', escFunction, false);
+    };
+  }, [state.showModal, escFunction]);
+
   const onClickOpenModal = () => {
     setState((state) => ({ ...state, showModal: true }));
   };
 
   const onClickCloseModal = (e) => {
     e.preventDefault();
+    editCard(props.column, props.card.id, cardEdit.title, cardEdit.body);
     setState((state) => ({ ...state, showModal: false }));
   };
 
@@ -104,14 +139,40 @@ const CardItem = (props) => {
     setState((state) => ({ ...state, comment: event.target.value }));
   };
 
-  console.log('cardstate', state);
-  console.log('cardprops', props);
+  const createComment = () => {
+    addComment(props.column, props.card.id, state.comment);
+    setState((state) => ({
+      ...state,
+      comment: '',
+    }));
+  };
+
+  const endEdit = (event) => {
+    setCardEdit((prev) => ({
+      ...prev,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  const delCard = () => {
+    deleteCard(props.column, props.card.id);
+    setState((state) => ({ ...state, showModal: false }));
+  };
 
   const comments = props.card.comments.map((comment) => {
-    return <CommentItem comment={comment} />;
+    return (
+      <CommentItem
+        key={comment.id}
+        comment={comment}
+        column={props.column}
+        cardId={props.card.id}
+      />
+    );
   });
 
   const { addComment } = React.useContext(Context);
+  const { editCard } = React.useContext(Context);
+  const { deleteCard } = React.useContext(Context);
 
   return (
     <Fragment>
@@ -123,29 +184,43 @@ const CardItem = (props) => {
       {state.showModal && (
         <CardModal>
           <ModalWrapper>
-            <ModalContent>
-              <div className="modal-title">{props.card.title}</div>
+            <ModalContent key={props.card.id}>
+              <textarea
+                name="title"
+                spellCheck="false"
+                className="modal-title"
+                onBlur={endEdit}
+                defaultValue={props.card.title}
+              ></textarea>
               <a href="" onClick={onClickCloseModal} className="close-icon">
                 X
               </a>
-              <div className="modal-body">{props.card.body}</div>
+              <textarea
+                name="body"
+                rows="10"
+                spellCheck="false"
+                className="modal-body"
+                onBlur={endEdit}
+                defaultValue={props.card.body}
+              ></textarea>
               <div className="comments">
                 {comments}
                 <CreateComment>
                   Create comment:
-                  <input type="text" onChange={commentInput} />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      addComment(props.column, props.card.id, state.comment);
-                    }}
-                  >
+                  <input
+                    value={state.comment}
+                    type="text"
+                    onChange={commentInput}
+                  />
+                  <button type="button" onClick={createComment}>
                     Create
                   </button>
                 </CreateComment>
               </div>
               <div className="modal-author">Author: {props.card.author}</div>
-              <div className="modal-delete">Delete</div>
+              <div onClick={delCard} className="modal-delete">
+                Delete
+              </div>
             </ModalContent>
           </ModalWrapper>
         </CardModal>
